@@ -7,13 +7,13 @@ class DataLoader():
     def __init__(self):
 
         # Load ERA5 geopotential levels
-        era5_ds1 = xr.open_dataset("./datasets/gan_gpm/GEOP1000_GAN_2017.nc")
-        era5_ds2 = xr.open_dataset("./datasets/gan_gpm/GEOP800_GAN_2017.nc")
-        era5_ds3 = xr.open_dataset("./datasets/gan_gpm/GEOP500_GAN_2017.nc")
+        era5_ds1 = xr.open_dataset("./datasets/GEOP1000_GAN_2017.nc")
+        era5_ds2 = xr.open_dataset("./datasets/GEOP800_GAN_2017.nc")
+        era5_ds3 = xr.open_dataset("./datasets/GEOP500_GAN_2017.nc")
         era5_times = era5_ds1.time[:].data
 
         # Load ERA5 total precipitation
-        prec_ds = xr.open_dataset("./datasets/gan_gpm/TP_GAN_2017.nc")
+        prec_ds = xr.open_dataset("./datasets/TP_GAN_2017.nc")
         prec_times = prec_ds.time[:].data
 
         # Find common dates and shuffle
@@ -41,23 +41,23 @@ class DataLoader():
         tp = np.stack((tp1, tp2, tp3), axis=3)
         tp = (tp * 2) - 1
 
-        self.gpm_train = tp[:600,:,:,:]
+        self.prec_train = tp[:600,:,:,:]
         self.era5_train = z[:600,:,:,:]
 
-        self.gpm_test = tp[600:750,:,:,:]
+        self.prec_test = tp[600:750,:,:,:]
         self.era5_test = z[600:750,:,:,:]
 
-        self.gpm_val = tp[750:,:,:]
+        self.prec_val = tp[750:,:,:]
         self.era5_val = z[750:,:,:]
 
 
     def load_data(self, batch_size=1, is_testing=False):
         if is_testing:
-            idx = np.random.choice(self.gpm_test.shape[0], size=batch_size)
-            return self.gpm_test[idx,:,:,:], self.era5_test[idx,:,:,:]
+            idx = np.random.choice(self.prec_test.shape[0], size=batch_size)
+            return self.prec_test[idx,:,:,:], self.era5_test[idx,:,:,:]
         else:
-            idx = np.random.choice(self.gpm_train.shape[0], size=batch_size)
-            return self.gpm_train[idx,:,:,:], self.era5_train[idx,:,:,:]
+            idx = np.random.choice(self.prec_train.shape[0], size=batch_size)
+            return self.prec_train[idx,:,:,:], self.era5_train[idx,:,:,:]
 
 
     def load_batch(self, batch_size=1, is_testing=False):
