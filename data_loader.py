@@ -1,7 +1,5 @@
 import numpy as np
-from netCDF4 import Dataset
 import xarray as xr
-import sys
 
 class DataLoader():
     def __init__(self):
