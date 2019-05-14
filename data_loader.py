@@ -31,12 +31,12 @@ class DataLoader():
         # Create precipitation normalised stack
         tp = prec_ds.tp.sel(time=times[::10])[:].data * 1000
         tp = np.clip(tp, 0, 30)
-        tp1 = np.log(1+np.log(1+tp))
-        tp1 = np.clip(tp1, 0, 1)
+        tp1 = tp / 30
         tp2 = np.log(1+tp)/np.log(31)
-        tp3 = tp / 30
+        tp3 = np.log(1+np.log(1+tp))
+        tp3 = np.clip(tp3, 0, 1)
 
-        tp = np.stack((tp1, tp2, tp3), axis=3)
+        tp = np.stack((tp3, tp3, tp3), axis=3)
         tp = (tp * 2) - 1
 
         self.prec_train = tp[:600,:,:,:]
